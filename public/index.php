@@ -41,7 +41,7 @@
 $routerContainer = new RouterContainer();
 $map = $routerContainer->getMap();
 
-$baseRoute = '/CursoPHP';
+$baseRoute = '/PlatziPHP/CursoPHP';
 
 $map->get('index', $baseRoute.'/', [
 //$map->get('index', '/', [

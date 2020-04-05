@@ -1,11 +1,13 @@
 Utilizaremos los siguientes aplicativos
 
 phpsorm: editor para php (opcional, puede ser vsc)
+virtualbox
+git
 vegrant
 	vegrant -v: version
 laravel homestead
 	1. ejcutar en consola:
-	 a. vagrant box add laravel-homestead 
+	 a. vagrant box add laravel/homestead
 	 b. seleccionar la opción 3 (virtual box)
 	2. Clonar el proyecto de homestead (en el repositorio a trabajar):
 	 a. git clone https://github.com/laravel/homestead.git
