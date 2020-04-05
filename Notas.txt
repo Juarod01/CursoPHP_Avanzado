@@ -1,0 +1,96 @@
+* PSR: Son recomendaciones y estándares para tu código de PHP.
+
+*Composer: Es un manejador de dependencias, donde podremos traer librerias de terceros y 
+  tambien podemos implementar estandar PSR4 (permite autocargado de archivos automatico).
+  https://getcomposer.org/ 
+  1. Descargamos archivos: Composer-setup.exe y Composer.phar y lo pegamos en nuestro proyecto.
+  2. Instalar Composer-setup.exe (solo damos siguiente, sin habilitar ninguna opción)
+  3. Creamos un archivo en la raiz del proyecto, llamado "composer.json" y escribimos:
+      {
+        "autoload": {
+          "psr-4": {
+            "App\\": "app/"
+          }
+        },
+        "require":{}
+      }
+    (Ojo, todo depende de la estructura del proyecto, ahí solo llamamos el manejador de archivos psr4).
+  4. Vamos a consola, a la raiz del proyecto y ejecutamos el siguiente comando para instalar composer, 
+      segun configuramos: "php composer.phar install"
+      con esto, se crea una carpeta llamada "vendor" en el proyecto.
+  5. Con esto verificamos que se crea una carpeta llamada "vendor" y ya podemos trabajar para administrar 
+      bien los archivos, que sean llamados correctamente sin necesidad de utilizar "require".
+
+PDO: Php data object
+ORM: Object relational mapping
+    Una principal característica de un ORM es que hace más transparente las conexiones a PostgreSQL y MySQL, 
+    además nos protege de algunas vulnerabilidades de SQL y facilita algunas validaciones a la información.
+Packagist: es un sitio donde encontraras múltiples librerías de terceros que puedes integrar a tus proyectos 
+    mediante composer, de aquí añadiremos nuestra herramienta para la conexión a base de datos.
+    https://packagist.org/packages/illuminate/database
+    Ahí encontraremos un información de este paquete, este paquete implementa un ORM, que soporta conexiones
+    MySQL, Postgres, SQL Server, y SQLite.
+
+    1. Para agregar la libreria al proyecto, utilizamos el comando (require illuminate/database)
+        Esta en la página. Y lo ejecutamos desde consola de la siguiente forma:
+        "php composer.phar require illuminate/database"
+        Una vez realizado esto, se realizan cambios:
+        + El archivo composer.json presenta una modificación en "require", ahí nos notifica que estamos 
+          utilizando illuminate/database y nos indica la versión.
+        + Se crea un archivo llamado "composer.lock", este archivo indica las dependencias que tiene 
+          composer, en que estan basadas.
+        + Tamiben crea mas carpetas dentro de "Vendor", que son necesarias para la libreria instalada.
+
+        OJO: Como buena practica, no se debe subir la carpeta vendor y el archivo composer.phar a los repositorios, 
+        quien vaya a utilizar el codigo debe ejecutar el comando "php composer.phar install"
+
+    2. Hay que leer las instrucciones en la pagina, para empezar a utilizar el paquete, crear la capsula de conexión.
+
+Front Controller: es un patrón de diseño que nos dará una solución a la redundancia del código en las múltiples 
+    entradas a la aplicación. Este tendrá el control de todas las entradas además de las inicializaciones de 
+    base de datos etc.
+
+PSR7: Es un estandar que nos permite normalizar un request y un response en PHP.
+    En este enlace encontrarás la documentación de PSR7: https://www.php-fig.org/psr/psr-7/
+    Aquí encontrarás cómo implementarlo: https://docs.laminas.dev/laminas-diactoros/
+
+    Utilizamos la libreria "laminas-diactoros" que utiliza el estandar PSR7, se realiza instalación
+    con el comando: "php composer.phar require laminas/laminas-diactoros"
+
+    aura/router: Es otro paquete que utiliza el estandar PSR7: composer require aura/router
+      documentación: https://github.com/auraphp/Aura.Router/blob/HEAD/docs/index.md
+
+
+.htaccess: (motor de direccionamiento de apache) Son archivos de configuración de apache, permite redireccionar
+
+MVC: Es un patrón de diseño que divide nuestra aplicación en tres partes fundamentales: Model, View, Controller
+
+Template engines: Son motores que sirven para renderear el código html y sustituir las partes de código con los 
+    datos que se tienen que imprimir. 
+    PHP a pesar de que fue pensado para ser un template engine, se ha enfocado más en la programación, 
+    por eso tenemos librerías que se concentran totalmente en esto.
+
+    Twig: es un Template Engine que nos ayudará a manejar la seguridad en los elementos de entrada de la aplicación.
+
+Validaciones: Usaremos esta dependencia: https://packagist.org/packages/respect/validation la cual integraremos a composer.
+    Las validaciones se realizan del lado del servidor, tambien se deben realizar validaciones
+    del lado del cliente.
+
+Subir archivos: Al subir archivos debemos tener muchos puntos de seguridad en cuenta, pues exponemos el acceso al servidor.
+    Primero prepararemos el form colocando la propiedad: enctype='multipart/form-data
+    Después desde el código PHP obtendremos el archivo con la variable super global $_FILES.
+    Es recomendable alojar los archivos en un servidor diferente, realizar validaciones con el 
+    tipo de archivos, tanto en frontend como en backend.
+
+Variables de entorno: Los datos de configuración de la base de datos por ahora se encuentran hardcodeados. Utilizaremos 
+    variables de entorno como una buena práctica para sacarlas de ahí.
+    Utilizaremos esta dependencia para cargar las variables de entono en super variables: 
+    https://packagist.org/packages/vlucas/phpdotenv
+    El archivo .env que se genera, no se sube a repositorio
+
+Deploy: Termino utilizado para decir que se va a enviar aplicación a otro servidor.
+    Heroku: Ofrece capa gratuita de servidores y DB, para realizar pruebas.
+    Para subir el proyecto a Heroku podemos utilizar git:
+    1. Primero debemos instalar la aplicación de Heroku.
+    2. 
+

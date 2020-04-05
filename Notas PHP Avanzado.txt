@@ -1,0 +1,30 @@
+Utilizaremos los siguientes aplicativos
+
+phpsorm: editor para php (opcional, puede ser vsc)
+vegrant
+	vegrant -v: version
+laravel homestead
+	1. ejcutar en consola:
+	 a. vagrant box add laravel-homestead 
+	 b. seleccionar la opción 3 (virtual box)
+	2. Clonar el proyecto de homestead (en el repositorio a trabajar):
+	 a. git clone https://github.com/laravel/homestead.git
+	3. Inicializar homestead en consola
+	 a. init.bat
+	 b. con ese comando, se crea un nuevo archivo de configuración (Homestead.yaml)
+	 c. editamos ese archivo: 
+		en la parte de "folders", hay 2 opciones map y to
+		map, es la carpeta donde esta nuestro repositorio en la maquina local (aqui, podemos en nombre de la carpeta madre del repositorio)
+		to, es la carpeta donde se va a replicar el codigo en la maquina virtual
+
+		en la parte de "sities", se agregan los diferentes proyectos, por defecto aparece uno.
+		agregamos uno nuevo: 
+		-map: cursophp.test
+		to: /home/vagrant/code/CursoPHP/public
+
+		en la parte de "databases", agregamos la nuestra
+		-cursophp
+	 d. ejecutar el comando "vagrant up": con esto, se crea una nueva maquina virtual, y si ya esta creada, la reinicia.
+
+
+
