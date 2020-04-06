@@ -17,16 +17,22 @@ laravel homestead
 	 c. editamos ese archivo: 
 		en la parte de "folders", hay 2 opciones map y to
 		map, es la carpeta donde esta nuestro repositorio en la maquina local (aqui, podemos en nombre de la carpeta madre del repositorio)
+			map: C:\xampp\htdocs\PlatziPHP
 		to, es la carpeta donde se va a replicar el codigo en la maquina virtual
+			to: /home/vagrant/code
 
 		en la parte de "sities", se agregan los diferentes proyectos, por defecto aparece uno.
 		agregamos uno nuevo: 
-		-map: cursophp.test
-		to: /home/vagrant/code/CursoPHP/public
+			-map: cursophp.test
+			to: /home/vagrant/code/CursoPHP/public
 
 		en la parte de "databases", agregamos la nuestra
-		-cursophp
+			-cursophp
+		en "features" pasamos 
+			- mariadb: true
+			- mysql8: true
 	 d. ejecutar el comando "vagrant up": con esto, se crea una nueva maquina virtual, y si ya esta creada, la reinicia.
+		Si necesitas reaprovisionar, por alguna modificación, ejectar comando "vagrant reload --provision"
 
 
 
