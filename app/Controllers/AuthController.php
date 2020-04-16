@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\User;
 use Respect\Validation\Validator as v;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Diactoros\ServerRequest;
 
 class AuthController extends BaseController{
 
@@ -11,7 +12,7 @@ class AuthController extends BaseController{
     return $this->renderHTML('login.twig');
   }
 
-  public function postLogin($request){
+  public function postLogin(ServerRequest $request){
     $postData = $request->getParsedBody();
     $responseMessage = null;
     $user = User::where('mail', $postData['mail'])->first();
