@@ -9,10 +9,10 @@ class IndexController extends BaseController{
     $jobs = Job::all(); //Nos trae todos los registros que encuentre en la tabla de la DDBB
     $projects = Project::all();
 
-    $limitMonths = 15;
+    /*$limitMonths = 15;
     $jobs = array_filter($jobs->toArray(), function ($job) use ($limitMonths){  //closure -- se añade 'use' para poder utilizar la variable
         return $job['months'] >= $limitMonths;
-    });
+    });*/
 
     $name = 'Juan David Rodriguez';
 
