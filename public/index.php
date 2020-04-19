@@ -13,6 +13,12 @@
 
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
+  use Laminas\Diactoros\Response;
+  use Laminas\Diactoros\ServerRequestFactory;
+  use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+  use WoohooLabs\Harmony\Harmony;
+  use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
+  use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
 
   $container = new DI\Container();
 
@@ -48,77 +54,77 @@ $baseRoute = '';
 
 $map->get('index', $baseRoute.'/', [
 //$map->get('index', '/', [
-  'controller' => 'App\Controllers\IndexController',
-  'action' => 'indexAction'
+  'App\Controllers\IndexController',
+  'indexAction'
 ]);
 //$map->get('addjob', '/add/job', [
   $map->get('addJob', $baseRoute.'/add/job', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction',
-    'auth' => true
+    'App\Controllers\JobsController',
+    'getAddJobAction',
+    true
   ]);
 $map->post('saveJob', $baseRoute.'/add/job', [
   //$map->post('saveJob', 'add/job', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction',
-    'auth' => true
+    'App\Controllers\JobsController',
+    'getAddJobAction',
+    true
 ]);
 $map->get('indexJob', $baseRoute.'/jobs', [
 //$map->get('indexJob', '/add/job', [
-  'controller' => 'App\Controllers\JobsController',
-  'action' => 'indexAction',
-  'auth' => true
+  'App\Controllers\JobsController',
+  'indexAction',
+  true
 ]);
 $map->get('deleteJobs', $baseRoute.'/jobs/delete', [
   //$map->get('addJob', '/add/job', [
-    'controller' => 'App\Controllers\JobsController',
-    'action' => 'deleteAction',
-    'auth' => true
+    'App\Controllers\JobsController',
+    'deleteAction',
+    true
 ]);
 //$map->get('addProject', '/add/project', [
 $map->get('addProject', $baseRoute.'/add/project', [
-  'controller' => 'App\Controllers\ProjectsController',
-  'action' => 'getAddProjectAction',
-  'auth' => true
+  'App\Controllers\ProjectsController',
+  'getAddProjectAction',
+  true
 ]);
 //$map->post('saveProject', '/add/project', [
 $map->post('saveProject', $baseRoute.'/add/project', [
-  'controller' => 'App\Controllers\ProjectsController',
-  'action' => 'getAddProjectAction',
-  'auth' => true
+  'App\Controllers\ProjectsController',
+  'getAddProjectAction',
+  true
 ]);
 //$map->get('addUser', '/add/user', [
 $map->get('addUser', $baseRoute.'/add/user', [
-  'controller' => 'App\Controllers\UserController',
-  'action' => 'getAddUserAction',
-  'auth' => true
+  'App\Controllers\UserController',
+  'getAddUserAction',
+  true
 ]);
 $map->post('saveUser', $baseRoute.'/add/user', [
 //$map->post('saveUser', '/add/user', [
-  'controller' => 'App\Controllers\UserController',
-  'action' => 'getAddUserAction',
-  'auth' => true
+  'App\Controllers\UserController',
+  'getAddUserAction',
+  true
 ]);
 $map->get('loginForm', $baseRoute.'/login', [
 //$map->get('loginForm', '/login', [
-  'controller' => 'App\Controllers\AuthController',
-  'action' => 'getLogin'
+  'App\Controllers\AuthController',
+  'getLogin'
 ]);
 $map->post('auth', $baseRoute.'/auth', [
 //$map->post('auth', '/auth', [
-  'controller' => 'App\Controllers\AuthController',
-  'action' => 'postLogin'
+  'App\Controllers\AuthController',
+  'postLogin'
 ]);
 $map->get('admin', $baseRoute.'/admin', [
 //$map->get('admin', '/admin', [
-  'controller' => 'App\Controllers\AdminController',
-  'action' => 'getIndex',
-  'auth' => true
+  'App\Controllers\AdminController',
+  'getIndex',
+  true
 ]);
 $map->get('logout', $baseRoute.'/logout', [
 //$map->get('logout', '/logout', [
-  'controller' => 'App\Controllers\AuthController',
-  'action' => 'getLogout'
+  'App\Controllers\AuthController',
+  'getLogout'
 ]);
 
 $matcher = $routerContainer->getMatcher();
@@ -127,25 +133,32 @@ $route = $matcher->match($request);
 if(!$route){
   echo 'No route';
 }else{
-  $handlerData = $route->handler;
-  $controllerName = $handlerData['controller'];
-  $actionName = $handlerData['action'];
-  $needsAuth = $handlerData['auth'] ?? false;
+  // $handlerData = $route->handler;
+  // $controllerName = $handlerData['controller'];
+  // $actionName = $handlerData['action'];
+  // $needsAuth = $handlerData['auth'] ?? false;
 
-  $sessionUserId = $_SESSION['userId'] ?? null;
-  if($needsAuth && !$sessionUserId){
-    echo 'Protected route';
-    die;
-  }
+  // $sessionUserId = $_SESSION['userId'] ?? null;
+  // if($needsAuth && !$sessionUserId){
+  //   echo 'Protected route';
+  //   die;
+  // }
 
-  $controller = $container->get($controllerName);
-  $response = $controller->$actionName($request); 
+  $harmony = new Harmony($request, new Response());
+  $harmony
+    ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
+    ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
+    ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
+    ->run();
 
-  foreach($response->getHeaders() as $name=>$values){
-    foreach($values as $value){
-      header(sprintf('%s: %s', $name, $value), false);
-    }
-  }
-  http_response_code($response->getStatusCode());
-  echo $response->getBody();
+  // $controller = $container->get($controllerName);
+  // $response = $controller->$actionName($request); 
+
+  // foreach($response->getHeaders() as $name=>$values){
+  //   foreach($values as $value){
+  //     header(sprintf('%s: %s', $name, $value), false);
+  //   }
+  // }
+  // http_response_code($response->getStatusCode());
+  // echo $response->getBody();
 }  
