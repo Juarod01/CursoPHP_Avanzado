@@ -14,6 +14,8 @@
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
 
+  $container = new DI\Container();
+
   $capsule = new Capsule;
   $capsule->addConnection([
       'driver'    => 'mysql',
@@ -121,24 +123,6 @@ $map->get('logout', $baseRoute.'/logout', [
 
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
-/*
-function printElement($job) {
-  // if($job->visible == false) {
-  //   return;
-  // }
-
-  echo '<li class="work-position">';
-  echo '<h5>' . $job->Title . '</h5>';
-  echo '<p>' . $job->Description . '</p>';
-  echo '<strong>Achievements:</strong>';
-  echo '<ul>';
-  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-  echo '</ul>';
-  echo '</li>'; 
-}
-*/
 
 if(!$route){
   echo 'No route';
@@ -154,7 +138,7 @@ if(!$route){
     die;
   }
 
-  $controller = new $controllerName;
+  $controller = $container->get($controllerName);
   $response = $controller->$actionName($request); 
 
   foreach($response->getHeaders() as $name=>$values){
