@@ -1,10 +1,24 @@
 <?php
-
 namespace App\Controllers;
 use App\Models\Job;
 use Respect\Validation\Validator as v;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 class JobsController extends BaseController{
+  public function indexAction(){
+    $jobs = Job::all();
+    return $this->renderHTML('jobs/index.twig', compact('jobs'));
+  }
+
+  public function deleteAction(ServerRequest $request){
+      $params = $request->getQueryParams();
+      $job = Job::where('Id', $params['id'])->delete();
+
+
+      return new RedirectResponse('/jobs');
+  }
+
   public function getAddJobAction($request){
     $ResponseMessage = null;
 
@@ -13,7 +27,8 @@ class JobsController extends BaseController{
       $jobValidator = v::key('title', v::stringType()->notEmpty())
                   ->key('description', v::stringType()->notEmpty());
 
-      try{
+      try
+      {
         $jobValidator->assert($postData);
         $postData = $request->getParsedBody();
 

@@ -49,17 +49,29 @@ $map->get('index', $baseRoute.'/', [
   'controller' => 'App\Controllers\IndexController',
   'action' => 'indexAction'
 ]);
-$map->get('addJob', $baseRoute.'/add/job', [
-//$map->get('addJob', '/add/job', [
+//$map->get('addjob', '/add/job', [
+  $map->get('addJob', $baseRoute.'/add/job', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth' => true
+  ]);
+$map->post('saveJob', $baseRoute.'/add/job', [
+  //$map->post('saveJob', 'add/job', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth' => true
+]);
+$map->get('indexJob', $baseRoute.'/jobs', [
+//$map->get('indexJob', '/add/job', [
   'controller' => 'App\Controllers\JobsController',
-  'action' => 'getAddJobAction',
+  'action' => 'indexAction',
   'auth' => true
 ]);
-$map->post('saveJob', $baseRoute.'/add/job', [
-//$map->post('saveJob', 'add/job', [
-  'controller' => 'App\Controllers\JobsController',
-  'action' => 'getAddJobAction',
-  'auth' => true
+$map->get('deleteJobs', $baseRoute.'/jobs/delete', [
+  //$map->get('addJob', '/add/job', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'deleteAction',
+    'auth' => true
 ]);
 //$map->get('addProject', '/add/project', [
 $map->get('addProject', $baseRoute.'/add/project', [
