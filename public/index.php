@@ -11,6 +11,7 @@
   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
   $dotenv->load();
 
+  use \App\Middlewares\AuthenticationMiddleware;
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
   use Laminas\Diactoros\Response;
@@ -147,18 +148,8 @@ if(!$route){
   $harmony = new Harmony($request, new Response());
   $harmony
     ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
+    ->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
     ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
     ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
     ->run();
-
-  // $controller = $container->get($controllerName);
-  // $response = $controller->$actionName($request); 
-
-  // foreach($response->getHeaders() as $name=>$values){
-  //   foreach($values as $value){
-  //     header(sprintf('%s: %s', $name, $value), false);
-  //   }
-  // }
-  // http_response_code($response->getStatusCode());
-  // echo $response->getBody();
 }  
