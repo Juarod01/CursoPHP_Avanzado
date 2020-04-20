@@ -12,6 +12,7 @@
   $dotenv->load();
 
   use \App\Middlewares\AuthenticationMiddleware;
+  use \Franzl\Middleware\Whoops\WhoopsMiddleware;
   use Illuminate\Database\Capsule\Manager as Capsule;
   use Aura\Router\RouterContainer;
   use Laminas\Diactoros\Response;
@@ -138,15 +139,16 @@ if(!$route){
     $harmony = new Harmony($request, new Response());
     $harmony
       ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
+      ->addMiddleware(new \Franzl\Middleware\Whoops\WhoopsMiddleware())
       ->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
       ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
       ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
       ->run();
-  }catch(Exception $e){
-    $emitter = new SapiEmitter();
-    $emitter->emit(new Response\EmptyResponse(400));
+  // }catch(Exception $e){
+  //   $emitter = new SapiEmitter();
+  //   $emitter->emit(new Response\EmptyResponse(400));
   }catch(Error $e){
     $emitter = new SapiEmitter();
-    $emitter->emit(new Response\EmptyResponse(500));
+    $emitter->emit(new Response\EmptyResponse(400));
   }
 }  
