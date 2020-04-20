@@ -1,15 +1,18 @@
 <?php
-  //Variales de errores
-  ini_set('display_errors', 1);
-  ini_set('display_starup_error', 1);
-  error_reporting(E_ALL); //Todos los errores.
-
+  
   require_once '../vendor/autoload.php';
 
   session_start();
 
   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
   $dotenv->load();
+
+  if(getenv('DEBUG') === 'true'){
+    //Variales de errores
+    ini_set('display_errors', 1);
+    ini_set('display_starup_error', 1);
+    error_reporting(E_ALL); //Todos los errores.
+  }
 
   use \App\Middlewares\AuthenticationMiddleware;
   use \Franzl\Middleware\Whoops\WhoopsMiddleware;
@@ -21,6 +24,11 @@
   use WoohooLabs\Harmony\Harmony;
   use WoohooLabs\Harmony\Middleware\DispatcherMiddleware;
   use WoohooLabs\Harmony\Middleware\HttpHandlerRunnerMiddleware;
+  use Monolog\Logger;
+  use Monolog\Handler\StreamHandler;
+
+  $log = new Logger('app');
+  $log->pushHandler(new StreamHandler(__DIR__ . '/../logs/app.log', Logger::WARNING));
 
   $container = new DI\Container();
 
@@ -138,15 +146,18 @@ if(!$route){
   try{
     $harmony = new Harmony($request, new Response());
     $harmony
-      ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
-      ->addMiddleware(new \Franzl\Middleware\Whoops\WhoopsMiddleware())
-      ->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
+      ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())); //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
+      if(getenv('DEBUG')==='true'){
+        $harmony->addMiddleware(new \Franzl\Middleware\Whoops\WhoopsMiddleware());
+      }
+      $harmony->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
       ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
       ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
       ->run();
-  // }catch(Exception $e){
-  //   $emitter = new SapiEmitter();
-  //   $emitter->emit(new Response\EmptyResponse(400));
+  }catch(Exception $e){
+    $log->warning($e->getMessage());
+    $emitter = new SapiEmitter();
+    $emitter->emit(new Response\EmptyResponse(400));
   }catch(Error $e){
     $emitter = new SapiEmitter();
     $emitter->emit(new Response\EmptyResponse(400));
