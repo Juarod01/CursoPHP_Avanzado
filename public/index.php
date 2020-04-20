@@ -134,22 +134,19 @@ $route = $matcher->match($request);
 if(!$route){
   echo 'No route';
 }else{
-  // $handlerData = $route->handler;
-  // $controllerName = $handlerData['controller'];
-  // $actionName = $handlerData['action'];
-  // $needsAuth = $handlerData['auth'] ?? false;
-
-  // $sessionUserId = $_SESSION['userId'] ?? null;
-  // if($needsAuth && !$sessionUserId){
-  //   echo 'Protected route';
-  //   die;
-  // }
-
-  $harmony = new Harmony($request, new Response());
-  $harmony
-    ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
-    ->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
-    ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
-    ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
-    ->run();
+  try{
+    $harmony = new Harmony($request, new Response());
+    $harmony
+      ->addMiddleware(new HttpHandlerRunnerMiddleware(new SapiEmitter())) //HttpHandlerRunnerMiddleware en vez de LaminasEmitterMiddleware
+      ->addMiddleware(new \App\Middlewares\AuthenticationMiddleware())
+      ->addMiddleware(new Middlewares\AuraRouter($routerContainer))
+      ->addMiddleware(new DispatcherMiddleware($container, 'request-handler'))
+      ->run();
+  }catch(Exception $e){
+    $emitter = new SapiEmitter();
+    $emitter->emit(new Response\EmptyResponse(400));
+  }catch(Error $e){
+    $emitter = new SapiEmitter();
+    $emitter->emit(new Response\EmptyResponse(500));
+  }
 }  
