@@ -63,78 +63,64 @@ $map = $routerContainer->getMap();
 $baseRoute = '';
 
 $map->get('index', $baseRoute.'/', [
-//$map->get('index', '/', [
   'App\Controllers\IndexController',
   'indexAction'
 ]);
-//$map->get('addjob', '/add/job', [
   $map->get('addJob', $baseRoute.'/add/job', [
     'App\Controllers\JobsController',
-    'getAddJobAction',
-    true
+    'getAddJobAction'
   ]);
 $map->post('saveJob', $baseRoute.'/add/job', [
-  //$map->post('saveJob', 'add/job', [
     'App\Controllers\JobsController',
-    'getAddJobAction',
-    true
+    'getAddJobAction'
 ]);
 $map->get('indexJob', $baseRoute.'/jobs', [
-//$map->get('indexJob', '/add/job', [
   'App\Controllers\JobsController',
-  'indexAction',
-  true
+  'indexAction'
 ]);
 $map->get('deleteJobs', $baseRoute.'/jobs/delete', [
-  //$map->get('addJob', '/add/job', [
     'App\Controllers\JobsController',
-    'deleteAction',
-    true
+    'deleteAction'
 ]);
-//$map->get('addProject', '/add/project', [
 $map->get('addProject', $baseRoute.'/add/project', [
   'App\Controllers\ProjectsController',
-  'getAddProjectAction',
-  true
+  'getAddProjectAction'
 ]);
-//$map->post('saveProject', '/add/project', [
 $map->post('saveProject', $baseRoute.'/add/project', [
   'App\Controllers\ProjectsController',
-  'getAddProjectAction',
-  true
+  'getAddProjectAction'
 ]);
-//$map->get('addUser', '/add/user', [
 $map->get('addUser', $baseRoute.'/add/user', [
   'App\Controllers\UserController',
-  'getAddUserAction',
-  true
+  'getAddUserAction'
 ]);
 $map->post('saveUser', $baseRoute.'/add/user', [
-//$map->post('saveUser', '/add/user', [
   'App\Controllers\UserController',
-  'getAddUserAction',
-  true
+  'getAddUserAction'
 ]);
 $map->get('loginForm', $baseRoute.'/login', [
-//$map->get('loginForm', '/login', [
   'App\Controllers\AuthController',
   'getLogin'
 ]);
 $map->post('auth', $baseRoute.'/auth', [
-//$map->post('auth', '/auth', [
   'App\Controllers\AuthController',
   'postLogin'
 ]);
 $map->get('admin', $baseRoute.'/admin', [
-//$map->get('admin', '/admin', [
   'App\Controllers\AdminController',
-  'getIndex',
-  true
+  'getIndex'
 ]);
 $map->get('logout', $baseRoute.'/logout', [
-//$map->get('logout', '/logout', [
   'App\Controllers\AuthController',
   'getLogout'
+]);
+$map->get('contactForm', $baseRoute.'/contact', [
+  'App\Controllers\ContactController',
+  'index'
+]);
+$map->post('contactSend', $baseRoute.'/contact/send', [
+  'App\Controllers\ContactController',
+  'send'
 ]);
 
 $matcher = $routerContainer->getMatcher();
